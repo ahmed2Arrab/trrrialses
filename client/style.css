@@ -1,0 +1,29 @@
+body { font-family: 'Cairo', sans-serif; transition: background-color 0.3s, color 0.3s; }
+.page-hidden { display: none !important; }
+.dash-bg { background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); min-height: 100vh; transition: background 0.3s;}
+.dark .dash-bg { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); }
+.dash-input { width: 100%; padding: 15px 45px 15px 15px; border: 2px solid #edf2f7; border-radius: 15px; outline: none; transition: 0.3s; margin-bottom: 15px; }
+.dark .dash-input { background-color: #1e293b; border-color: #334155; color: white; }
+.dash-input:focus { border-color: #f39c12; }
+.dash-btn { background: #2c3e50; color: white; border: none; padding: 15px; border-radius: 15px; font-weight: 700; width: 100%; cursor: pointer; transition: 0.3s; }
+.dark .dash-btn { background: #3b82f6; }
+.dash-btn:hover { background: #f39c12; }
+
+.dash-table { width: 100%; border-collapse: separate; border-spacing: 0 15px; }
+.dash-table th { padding: 15px; text-align: right; color: #718096; border-bottom: 2px solid #edf2f7; }
+.dark .dash-table th { border-bottom-color: #334155; color: #94a3b8; }
+.dash-table td { padding: 20px 15px; background: white; border-top: 1px solid #f1f1f1; border-bottom: 1px solid #f1f1f1; transition: 0.3s;}
+.dark .dash-table td { background: #1e293b; border-color: #334155; color: white; }
+
+@keyframes shake {
+    0%, 100% {transform: translateX(0);}
+    25% {transform: translateX(-10px);}
+    75% {transform: translateX(10px);}
+}
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+.dark ::-webkit-scrollbar-thumb { background: #475569; }
+.editable-item:hover { opacity: 0.7; transform: scale(1.02); transition: all 0.2s ease; cursor: pointer; }

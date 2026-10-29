@@ -1,0 +1,344 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  direction: rtl;
+  scroll-behavior: smooth;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Cairo', sans-serif;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  transition: background-color 0.3s, color 0.3s;
+  min-height: 100vh;
+}
+
+body.dark {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  color: #e2e8f0;
+}
+
+/* ── Scrollbar (gold / navy theme) ── */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0f172a;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #d4af37, #b8962e);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #f39c12;
+}
+
+.page-hidden {
+  display: none !important;
+}
+
+/* ── Dashboard background ── */
+.dash-bg {
+  background: linear-gradient(135deg, #f5f7fa 0%, #e2e8f0 50%, #c3cfe2 100%);
+  min-height: 100vh;
+  transition: background 0.4s ease;
+}
+.dark .dash-bg {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #0f172a 100%);
+}
+
+/* ── Login animated gradient background ── */
+.login-bg {
+  background: linear-gradient(-45deg, #0f172a, #1a2744, #2c3e50, #1a2744);
+  background-size: 400% 400%;
+  animation: gradientShift 12s ease infinite;
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+.login-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 20% 50%, rgba(212, 175, 55, 0.08) 0%, transparent 60%),
+              radial-gradient(ellipse at 80% 20%, rgba(243, 156, 18, 0.06) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+@keyframes gradientShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ── Inputs ── */
+.dash-input {
+  width: 100%;
+  padding: 15px 45px 15px 15px;
+  border: 2px solid #edf2f7;
+  border-radius: 15px;
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+  margin-bottom: 15px;
+}
+
+.dash-input:focus {
+  border-color: #d4af37;
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.25), 0 0 20px rgba(212, 175, 55, 0.15);
+}
+
+.dash-input.input-error {
+  animation: inputShake 0.45s ease;
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+}
+
+.dark .dash-input {
+  background-color: #1e293b;
+  border-color: #334155;
+  color: white;
+}
+
+.dark .dash-input:focus {
+  border-color: #d4af37;
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2), 0 0 20px rgba(212, 175, 55, 0.1);
+}
+
+/* ── Search bar with animated underline ── */
+.search-input-wrap {
+  position: relative;
+}
+.search-input-wrap::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #d4af37, #f39c12, transparent);
+  transition: width 0.4s ease, left 0.4s ease;
+  border-radius: 2px;
+}
+.search-input-wrap:focus-within::after {
+  width: 100%;
+  left: 0;
+}
+
+/* ── Buttons ── */
+.dash-btn {
+  background: #2c3e50;
+  color: white;
+  border: none;
+  padding: 15px;
+  border-radius: 15px;
+  font-weight: 700;
+  width: 100%;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.dark .dash-btn {
+  background: #3b82f6;
+}
+
+.dash-btn:hover {
+  background: #f39c12;
+  box-shadow: 0 4px 20px rgba(243, 156, 18, 0.35);
+}
+
+.dash-btn:active {
+  transform: scale(0.97);
+}
+
+.dash-btn-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.dash-btn-shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent);
+  transition: left 0.5s ease;
+}
+.dash-btn-shimmer:hover::after {
+  left: 150%;
+}
+
+/* ── Ripple effect ── */
+.ripple-btn {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+.ripple-effect {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  transform: scale(0);
+  animation: rippleAnim 0.6s ease-out;
+  pointer-events: none;
+}
+@keyframes rippleAnim {
+  to { transform: scale(4); opacity: 0; }
+}
+
+/* ── Logo glow pulse ── */
+.logo-glow {
+  animation: logoPulse 2.5s ease-in-out infinite;
+}
+@keyframes logoPulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 8px rgba(212, 175, 55, 0.4));
+    transform: scale(1);
+  }
+  50% {
+    filter: drop-shadow(0 0 20px rgba(212, 175, 55, 0.7));
+    transform: scale(1.03);
+  }
+}
+
+/* ── Table row hover accent ── */
+.table-row-hover {
+  transition: background 0.25s ease, border-right 0.25s ease, transform 0.2s ease;
+  border-right: 3px solid transparent;
+}
+.table-row-hover:hover {
+  border-right-color: #d4af37;
+  background: rgba(212, 175, 55, 0.05);
+}
+
+.dark .table-row-hover:hover {
+  background: rgba(212, 175, 55, 0.08);
+}
+
+/* ── Shimmer skeleton ── */
+.shimmer {
+  background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+  background-size: 200% 100%;
+  animation: shimmerMove 1.5s infinite;
+}
+.dark .shimmer {
+  background: linear-gradient(90deg, #334155 25%, #475569 50%, #334155 75%);
+  background-size: 200% 100%;
+}
+@keyframes shimmerMove {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── Modal backdrop ── */
+.modal-backdrop {
+  background: rgba(15, 23, 42, 0.65);
+}
+
+/* ── Sidebar gradient header ── */
+.sidebar-gradient-header {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #2c3e50 100%);
+  position: relative;
+  overflow: hidden;
+}
+.sidebar-gradient-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #d4af37, #f39c12, #d4af37, transparent);
+}
+
+/* ── Stat cards ── */
+.stat-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* ── Editable items ── */
+.editable-item:hover {
+  opacity: 0.85;
+  transform: scale(1.02);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+/* ── Global interactive transitions ── */
+button, a, input, select, textarea {
+  transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease,
+              box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
+}
+
+/* ── Animations ── */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { transform: translateY(20px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); opacity: 0; }
+  to   { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes inputShake {
+  0%, 100% { transform: translateX(0); }
+  20%      { transform: translateX(-8px); }
+  40%      { transform: translateX(8px); }
+  60%      { transform: translateX(-6px); }
+  80%      { transform: translateX(6px); }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-in;
+}
+
+.slide-in {
+  animation: slideIn 0.3s ease-in;
+}
+
+.slide-in-right {
+  animation: slideInRight 0.3s ease-in;
+}
+
+/* ── Toast custom styling ── */
+.Toastify__toast {
+  font-family: 'Cairo', sans-serif !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15) !important;
+}
+.Toastify__progress-bar {
+  background: linear-gradient(90deg, #d4af37, #f39c12) !important;
+}
+
+#root {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  min-height: 100vh;
+  text-align: inherit;
+  box-sizing: border-box;
+}

@@ -1,0 +1,841 @@
+<!doctype html>
+<html lang="ar" dir="rtl" class="light">
+  <head>
+    <!-- ========================================== -->
+    <!-- HEAD & METADATA                            -->
+    <!-- ========================================== -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>بوابة الدلتا للمقاولات العامة</title>
+
+    <!-- Icons & Fonts -->
+    <link rel="icon" id="dynamic-favicon" href="images/Eldelta-main-logo.jpg" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Tailwind & Custom CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- PDF Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="bg-brand-bg dark:bg-slate-900 text-gray-800 dark:text-gray-100">
+    <!-- ========================================== -->
+    <!-- LOGIN SCREEN                               -->
+    <!-- ========================================== -->
+    <section
+      id="login-wrapper"
+      class="dash-bg flex justify-center items-center p-5 relative z-[9999]"
+    >
+      <div
+        id="login-box"
+        class="bg-white dark:bg-slate-800 p-12 rounded-[30px] shadow-2xl w-full max-w-md text-center border border-gray-100 dark:border-slate-700"
+      >
+        <img
+          id="main-logo-login"
+          src="images/Eldelta-main-logo.jpg"
+          alt="Logo"
+          class="w-24 h-24 mx-auto mb-4 object-contain rounded-lg"
+        />
+        <h2 class="text-[#2c3e50] dark:text-white font-black text-3xl mb-8">
+          بوابة الدلتا للمقاولات
+        </h2>
+        <div class="relative mb-5">
+          <i
+            class="fas fa-user absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"
+          ></i>
+          <input
+            type="text"
+            id="userInput"
+            class="dash-input"
+            placeholder="اسم المستخدم"
+          />
+        </div>
+        <div class="relative mb-5">
+          <i
+            class="fas fa-lock absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"
+          ></i>
+          <input
+            type="password"
+            id="passInput"
+            class="dash-input"
+            placeholder="كلمة السر"
+            onkeyup="if (event.key === 'Enter') handleLogin();"
+          />
+        </div>
+        <button class="dash-btn text-lg" onclick="handleLogin()">
+          دخول النظام
+        </button>
+        <p id="errorMessage" class="text-red-500 font-bold mt-4 hidden">
+          خطأ في البيانات، حاول مرة أخرى!
+        </p>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- MAIN DASHBOARD                             -->
+    <!-- ========================================== -->
+    <section
+      id="dashboard-wrapper"
+      class="dash-bg page-hidden p-8 overflow-y-auto relative z-50"
+    >
+      <div
+        class="max-w-6xl mx-auto bg-white dark:bg-slate-800 rounded-[35px] p-10 shadow-xl border dark:border-slate-700"
+      >
+        <!-- Header Actions -->
+        <div
+          class="flex justify-between items-center mb-10 flex-wrap gap-5 border-b pb-6"
+        >
+          <div class="flex items-center gap-4">
+            <img
+              id="main-logo-dash"
+              src="images/Eldelta-main-logo.jpg"
+              class="w-16 h-16 object-contain rounded-lg"
+            />
+            <div>
+              <h1 class="text-4xl font-black text-dash-primary dark:text-white">
+                بوابة الدلتا للمقاولات العامة
+              </h1>
+              <p class="text-xl font-bold text-dash-accent mt-1">
+                أهلاً بك يا <span id="adminName"></span>
+              </p>
+            </div>
+          </div>
+          <div class="flex gap-3 items-center">
+            <button
+              onclick="toggleDarkMode()"
+              class="bg-gray-100 dark:bg-slate-700 w-14 h-14 rounded-2xl flex items-center justify-center text-2xl"
+            >
+              <i id="themeIcon" class="fas fa-moon"></i>
+            </button>
+            <button
+              onclick="downloadBackup()"
+              class="bg-blue-50 dark:bg-blue-900/30 text-blue-600 px-6 py-4 rounded-2xl font-black flex items-center gap-3"
+              title="نسخة احتياطية"
+            >
+              <i class="fas fa-file-archive"></i> نسخة احتياطية
+            </button>
+            <button
+              onclick="document.getElementById('restoreInput').click()"
+              class="bg-green-50 dark:bg-green-900/30 text-green-600 px-6 py-4 rounded-2xl font-black flex items-center gap-3"
+              title="استعادة البيانات"
+            >
+              <i class="fas fa-file-import"></i> استعادة
+            </button>
+            <input
+              type="file"
+              id="restoreInput"
+              class="hidden"
+              accept=".zip"
+              onchange="handleRestore(this)"
+            />
+
+            <button
+              onclick="openTrashModal()"
+              class="bg-red-50 dark:bg-red-900/30 text-red-500 px-6 py-4 rounded-2xl font-black flex items-center gap-3"
+            >
+              <i class="fas fa-trash-can"></i> المهملات
+            </button>
+            <button
+              onclick="toggleNewClientModal()"
+              class="bg-dash-accent text-white px-8 py-4 rounded-2xl font-black flex items-center gap-3"
+            >
+              + إنشاء عميل
+            </button>
+          </div>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="relative mb-8 max-w-2xl mx-auto">
+          <i
+            class="fas fa-search absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"
+          ></i>
+          <input
+            type="text"
+            id="mainSearchInput"
+            onkeyup="renderDashboard(this.value)"
+            class="dash-input pr-12 w-full"
+            placeholder="ابحث عن عميل، قطعة، أو رقم هاتف..."
+          />
+        </div>
+
+        <!-- Clients Table -->
+        <div
+          class="bg-gray-50 dark:bg-slate-900 rounded-3xl p-6 border dark:border-slate-700"
+        >
+          <table class="dash-table text-right min-w-full">
+            <thead>
+              <tr>
+                <th>العميل</th>
+                <th>اسم القطعة</th>
+                <th>المتبقي</th>
+                <th>الهاتف</th>
+                <th>الإجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="mainTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- CLIENT DETAILS PAGE                        -->
+    <!-- ========================================== -->
+    <section
+      id="client-wrapper"
+      class="page-hidden h-screen overflow-hidden flex bg-brand-bg dark:bg-slate-900 text-gray-800 dark:text-gray-100 relative z-40 transition-colors"
+    >
+      <!-- Back Button -->
+      <button
+        onclick="backToDashboard()"
+        class="absolute top-4 left-4 z-50 bg-brand-dark dark:bg-slate-800 text-white px-5 py-2 rounded-xl font-bold shadow-lg hover:bg-black transition flex items-center gap-2 border dark:border-slate-600"
+      >
+        <i class="fas fa-arrow-right"></i> العودة
+      </button>
+
+      <!-- Sidebar: Client Info -->
+      <aside
+        class="w-80 bg-white dark:bg-slate-800 border-l border-gray-200 dark:border-slate-700 shadow-xl z-10 flex flex-col transition-colors"
+      >
+        <div
+          class="p-6 bg-brand-dark dark:bg-slate-900 text-center border-b-4 border-brand-gold"
+        >
+          <h2 id="clientNameText" class="text-xl font-black text-white"></h2>
+          <p
+            id="clientPlotText"
+            class="text-brand-gold text-sm font-bold mt-1"
+          ></p>
+        </div>
+        <div class="p-6 flex-1 overflow-y-auto space-y-5">
+          <div>
+            <p class="text-xs text-gray-400 font-bold mb-1">رقم الجوال</p>
+            <div
+              class="flex items-center gap-3 bg-gray-50 dark:bg-slate-700 p-3 rounded-xl border border-gray-100 dark:border-slate-600 shadow-sm editable-item cursor-pointer"
+              onclick="requestEdit('phone', 'text', 'رقم الجوال')"
+            >
+              <i class="fas fa-phone text-brand-gold"></i
+              ><span id="clientPhoneText" class="font-bold"></span>
+            </div>
+          </div>
+          <div>
+            <p class="text-xs text-gray-400 font-bold mb-1">أصل مبلغ التعاقد</p>
+            <div
+              class="flex items-center gap-3 bg-gray-50 dark:bg-slate-700 p-3 rounded-xl border border-gray-100 dark:border-slate-600 shadow-sm editable-item cursor-pointer"
+              onclick="requestEdit('totalContract', 'number', 'مبلغ التعاقد')"
+            >
+              <i class="fas fa-money-bill text-brand-gold"></i
+              ><span id="totalContractText" class="font-bold"></span>
+              <span>ج.م</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+      <!-- Main Content: Financials & Docs -->
+      <main class="flex-1 overflow-y-auto p-8 relative">
+        <header
+          class="mb-8 flex justify-between items-center bg-white dark:bg-slate-800 p-6 rounded-3xl shadow-sm border border-gray-100 dark:border-slate-700 mt-2 transition-colors"
+        >
+          <div>
+            <h1 class="text-3xl font-black text-brand-dark dark:text-white">
+              لوحة تحكم العميل
+            </h1>
+            <p class="text-gray-500 dark:text-gray-400 font-semibold mt-1">
+              إدارة الشؤون المالية والمستندات
+            </p>
+          </div>
+          <button
+            onclick="previewStatementPDF()"
+            class="bg-brand-gold text-white px-6 py-3 rounded-2xl font-black flex items-center gap-2 hover:bg-yellow-600 transition shadow-lg"
+          >
+            <i class="fas fa-file-invoice-dollar"></i> معاينة كشف الحساب
+          </button>
+        </header>
+
+        <!-- Totals Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 mt-12">
+          <div
+            class="bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-sm border-b-8 border-green-500 relative group overflow-hidden flex flex-col justify-between h-56 transition-colors"
+          >
+            <div class="flex justify-between items-start">
+              <div>
+                <p class="text-gray-400 font-bold text-sm mb-1">
+                  إجمالي ما دفعه العميل
+                </p>
+                <h3
+                  class="text-4xl font-black text-green-600 dark:text-green-400"
+                >
+                  <span id="paidAmountText">0</span>
+                  <span class="text-lg">ج.م</span>
+                </h3>
+              </div>
+              <div
+                class="w-14 h-14 bg-green-50 dark:bg-green-900/30 text-green-500 rounded-2xl flex items-center justify-center text-2xl"
+              >
+                <i class="fas fa-money-bill-wave"></i>
+              </div>
+            </div>
+            <button
+              onclick="requestEdit('paid', 'number', 'تحديث المبلغ')"
+              class="mt-auto w-full bg-gray-50 dark:bg-slate-700 text-gray-600 dark:text-gray-300 py-3 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-green-500 dark:hover:bg-green-600 hover:text-white transition"
+            >
+              <i class="fas fa-pen"></i> تحديث المبلغ
+            </button>
+          </div>
+          <div
+            class="bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-sm border-b-8 border-red-500 relative group overflow-hidden flex flex-col justify-between h-56 transition-colors"
+          >
+            <div class="flex justify-between items-start">
+              <div>
+                <p class="text-gray-400 font-bold text-sm mb-1">
+                  المتبقي على العميل (دين)
+                </p>
+                <h3 class="text-4xl font-black text-red-600 dark:text-red-400">
+                  <span id="owedAmountText">0</span>
+                  <span class="text-lg">ج.م</span>
+                </h3>
+                <p class="text-[10px] text-gray-400 mt-2">
+                  * تشمل (أصل المبلغ المتبقي + الإكراميات)
+                </p>
+              </div>
+              <div
+                class="w-14 h-14 bg-red-50 dark:bg-red-900/30 text-red-500 rounded-2xl flex items-center justify-center text-2xl"
+              >
+                <i class="fas fa-hand-holding-dollar"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- PDF Box -->
+          <!-- <div
+            class="bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-sm border border-gray-100 dark:border-slate-700 flex flex-col items-center justify-center text-center h-56 transition-colors"
+          >
+            <div
+              class="w-16 h-16 bg-red-50 dark:bg-red-900/30 rounded-2xl flex items-center justify-center mb-3"
+            >
+              <i class="fas fa-file-pdf text-4xl text-red-500"></i>
+            </div>
+            <h3 class="text-lg font-black text-brand-dark dark:text-white">
+              الملف الأصلي للعميل
+            </h3>
+            <p
+              class="text-xs text-gray-500 dark:text-gray-400 font-semibold mt-1 mb-4"
+            >
+              يحتوي على العقود والمخططات
+            </p>
+            <button
+              class="w-full bg-[#1e293b] text-white py-3 rounded-xl font-bold hover:bg-black transition flex items-center justify-center gap-3"
+            >
+              تحميل الملف <i class="fas fa-download"></i>
+            </button>
+          </div> -->
+        </div>
+
+        <div id="financials-capture-area">
+          <!-- Tables Grid -->
+          <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+            <!-- Expenses -->
+            <div
+              class="bg-white dark:bg-slate-800 p-6 rounded-3xl border border-gray-100 dark:border-slate-700 shadow-sm flex flex-col transition-colors"
+            >
+              <div class="flex justify-between items-center mb-6">
+                <h3
+                  class="font-black text-xl text-brand-dark dark:text-white flex items-center gap-2"
+                >
+                  <i class="fas fa-receipt text-brand-gold"></i> المصروفات (تخصم
+                  من الأصل)
+                </h3>
+                <button
+                  onclick="showSubModal('exp')"
+                  class="text-sm bg-gray-50 dark:bg-slate-700 dark:text-gray-200 text-gray-600 px-3 py-1 rounded-lg font-bold hover:bg-gray-200 transition"
+                >
+                  إضافة +
+                </button>
+              </div>
+              <div class="overflow-y-auto max-h-64 flex-1 pr-2">
+                <table class="w-full text-right text-sm">
+                  <thead class="bg-gray-50 dark:bg-slate-700 sticky top-0">
+                    <tr>
+                      <th
+                        class="p-3 text-sm font-bold text-gray-500 dark:text-gray-300 rounded-r-lg"
+                      >
+                        البيان
+                      </th>
+                      <th
+                        class="p-3 text-sm font-bold text-gray-500 dark:text-gray-300"
+                      >
+                        التاريخ
+                      </th>
+                      <th
+                        class="p-3 text-sm font-bold text-gray-500 dark:text-gray-300 rounded-l-lg"
+                      >
+                        المبلغ
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody
+                    id="expensesTableBody"
+                    class="dark:text-gray-200"
+                  ></tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Tips -->
+
+            <div
+              class="bg-white dark:bg-slate-800 p-6 rounded-3xl border border-gray-100 dark:border-slate-700 shadow-sm flex flex-col transition-colors"
+            >
+              <div class="flex justify-between items-center mb-6">
+                <h3
+                  class="font-black text-xl text-brand-dark dark:text-white flex items-center gap-2"
+                >
+                  <i class="fas fa-hand-holding-heart text-brand-gold"></i>
+                  إكراميات المصالح (تضاف للدين)
+                </h3>
+                <button
+                  onclick="showSubModal('tip')"
+                  class="text-sm bg-orange-50 dark:bg-orange-900/30 text-orange-600 px-3 py-1 rounded-lg font-bold hover:bg-orange-100 transition"
+                >
+                  إضافة +
+                </button>
+              </div>
+              <div class="overflow-y-auto max-h-64 flex-1 pr-2">
+                <table class="w-full text-right text-sm">
+                  <thead class="bg-gray-50 dark:bg-slate-700 sticky top-0">
+                    <tr>
+                      <th
+                        class="p-3 text-sm font-bold text-gray-500 dark:text-gray-300 rounded-r-lg"
+                      >
+                        المصلحة
+                      </th>
+                      <th
+                        class="p-3 text-sm font-bold text-gray-500 dark:text-gray-300"
+                      >
+                        من سدد؟
+                      </th>
+                      <th
+                        class="p-3 text-sm font-bold text-gray-500 dark:text-gray-300"
+                      >
+                        التاريخ
+                      </th>
+                      <th
+                        class="p-3 text-sm font-bold text-gray-500 dark:text-gray-300 rounded-l-lg"
+                      >
+                        المبلغ
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody id="tipsTableBody" class="dark:text-gray-200"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- المدخلات الجديده للعميل  -->
+
+            <div
+              class="bg-white dark:bg-slate-800 p-6 rounded-3xl border border-gray-100 dark:border-slate-700 shadow-sm flex flex-col transition-colors"
+            >
+              <div class="flex justify-between items-center mb-6">
+                <h3
+                  class="font-black text-xl text-brand-dark dark:text-white flex items-center gap-2"
+                >
+                  <i class="fas fa-hand-holding-heart text-brand-gold"></i>
+                  مدخلات العميل الى المكتب
+                </h3>
+                <button
+                  onclick="showSubModal('newMoney')"
+                  class="text-sm bg-orange-50 dark:bg-orange-900/30 text-orange-600 px-3 py-1 rounded-lg font-bold hover:bg-orange-100 transition"
+                >
+                  إضافة +
+                </button>
+              </div>
+              <div class="overflow-y-auto max-h-64 flex-1 pr-2">
+                <table class="w-full text-right text-sm">
+                  <thead class="bg-gray-50 dark:bg-slate-700 sticky top-0">
+                    <tr>
+                      <th
+                        class="p-3 text-sm font-bold text-gray-500 dark:text-gray-300"
+                      >
+                        من استلم؟
+                      </th>
+                      <th
+                        class="p-3 text-sm font-bold text-gray-500 dark:text-gray-300"
+                      >
+                        التاريخ
+                      </th>
+                      <th
+                
+            <!-- Documents -->
+            <div
+              class="bg-white dark:bg-slate-800 p-6 rounded-3xl border border-gray-100 dark:border-slate-700 shadow-sm flex flex-col transition-colors"
+            >
+              <div class="flex justify-between items-center mb-6">
+                <h3
+                  class="font-black text-xl text-brand-dark dark:text-white flex items-center gap-2"
+                >
+                  <i class="fas fa-file-export text-blue-500"></i> تتبع حركة
+                  الورق
+                </h3>
+                <button
+                  onclick="showSubModal('doc')"
+                  class="text-sm bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 px-3 py-1 rounded-lg font-bold hover:bg-blue-100 transition"
+                >
+                  إضافة حركة +
+                </button>
+              </div>
+              <div class="overflow-y-auto max-h-64 flex-1 pr-2">
+                <table class="w-full text-right text-sm">
+                  <thead class="bg-gray-50 dark:bg-slate-700 sticky top-0">
+                    <tr>
+                      <th
+                        class="p-3 text-sm font-bold text-gray-500 dark:text-gray-300 rounded-r-lg"
+                      >
+                        المستلم
+                      </th>
+                      <th
+                        class="p-3 text-sm font-bold text-gray-500 dark:text-gray-300"
+                      >
+                        الورقة
+                      </th>
+                      <th
+                        class="p-3 text-sm font-bold text-gray-500 dark:text-gray-300"
+                      >
+                        الغرض
+                      </th>
+                      <th
+                        class="p-3 text-sm font-bold text-gray-500 dark:text-gray-300"
+                      >
+                        المكان
+                      </th>
+                      <th
+                        class="p-3 text-sm font-bold text-gray-500 dark:text-gray-300"
+                      >
+                        التاريخ
+                      </th>
+                      <th
+                        class="p-3 text-sm font-bold text-gray-500 dark:text-gray-300 rounded-l-lg"
+                      >
+                        الإجراء
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody
+                    id="documentsTableBody"
+                    class="dark:text-gray-200"
+                  ></tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- PDF Management Section -->
+            <div
+              class="bg-white dark:bg-slate-800 p-6 rounded-3xl border border-gray-100 dark:border-slate-700 shadow-sm flex flex-col transition-colors"
+            >
+              <div class="flex justify-between items-center mb-6">
+                <h3
+                  class="font-black text-xl text-brand-dark dark:text-white flex items-center gap-2"
+                >
+                  <i
+                    class="fa-solid fa-file-zipper"
+                    style="color: rgb(227, 61, 12)"
+                  ></i>
+                  أرشيف ملفات
+                </h3>
+                <div>
+                  <button
+                    onclick="document.getElementById('pdfFileInput').click()"
+                    class="bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 px-4 py-2 rounded-xl font-bold hover:bg-red-100 transition flex items-center gap-2"
+                  >
+                    <i class="fas fa-upload"></i> رفع ملف جديد
+                  </button>
+                  <input
+                    type="file"
+                    id="pdfFileInput"
+                    class="hidden"
+                    accept=".pdf, .dwg, .jpg, .jpeg, .png"
+                    onchange="handleFileUpload(this)"
+                  />
+                </div>
+              </div>
+              <div class="overflow-y-auto max-h-64 flex-1 pr-2">
+                <table class="w-full text-right text-sm">
+                  <thead class="bg-gray-50 dark:bg-slate-700 sticky top-0">
+                    <tr>
+                      <th
+                        class="p-3 text-sm font-bold text-gray-500 dark:text-gray-300 rounded-r-lg"
+                      >
+                        اسم الملف
+                      </th>
+                      <th
+                        class="p-3 text-sm font-bold text-gray-500 dark:text-gray-300"
+                      >
+                        تاريخ الرفع
+                      </th>
+                      <th
+                        class="p-3 text-sm font-bold text-gray-500 dark:text-gray-300 rounded-l-lg text-center"
+                      >
+                        الإجراءات
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody id="pdfTableBody" class="dark:text-gray-200">
+                    <!-- PDF items will be rendered here -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div
+              class="bg-white dark:bg-slate-800 p-6 rounded-3xl border border-gray-100 dark:border-slate-700 shadow-sm flex flex-col transition-colors"
+            >
+              <div class="flex justify-between items-center mb-6">
+                <h3
+                  class="font-black text-xl text-brand-dark dark:text-white flex items-center gap-2"
+                >
+                  <i class="fa-solid fa-file-invoice-dollar text-green-600"></i>
+                  أرشيف الإيصالات
+                </h3>
+                <button
+                  onclick="document.getElementById('receiptFileInput').click()"
+                  class="bg-green-50 text-green-600 px-4 py-2 rounded-xl font-bold transition flex items-center gap-2"
+                >
+                  <i class="fas fa-camera"></i> رفع إيصال
+                </button>
+                <input
+                  type="file"
+                  id="receiptFileInput"
+                  class="hidden"
+                  accept=".pdf, .jpg, .jpeg, .png"
+                  onchange="handleFileUpload(this, 'receipts')"
+                />
+              </div>
+              <div class="overflow-y-auto max-h-64 pr-2">
+                <table class="w-full text-right text-sm">
+                  <thead class="bg-gray-50 dark:bg-slate-700 sticky top-0">
+                    <tr>
+                      <th class="p-3 font-bold text-gray-500">
+                        البيان / الإيصال
+                      </th>
+                      <th class="p-3 font-bold text-gray-500">التاريخ</th>
+                      <th class="p-3 font-bold text-gray-500 text-center">
+                        الإجراء
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody id="receiptTableBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- MODALS & OVERLAYS                          -->
+    <!-- ========================================== -->
+
+    <!-- New Client Modal -->
+    <div
+      id="newClientModal"
+      class="hidden fixed inset-0 bg-black/60 z-[100] flex justify-center items-center"
+    >
+      <div class="bg-white dark:bg-slate-800 p-8 rounded-3xl w-full max-w-md">
+        <h3 class="text-2xl font-black mb-6 dark:text-white">
+          إضافة عميل جديد
+        </h3>
+        <input
+          type="text"
+          id="newC_Name"
+          class="dash-input mb-4"
+          placeholder="اسم العميل"
+        />
+        <input
+          type="text"
+          id="newC_Plot"
+          class="dash-input mb-4"
+          placeholder="اسم القطعة"
+        />
+        <input
+          type="number"
+          id="newC_Total"
+          class="dash-input mb-4"
+          placeholder="أصل مبلغ التعاقد (ج.م)"
+        />
+        <button onclick="createNewClient()" class="dash-btn mb-3">حفظ</button>
+        <button
+          onclick="toggleNewClientModal()"
+          class="w-full text-red-500 font-bold"
+        >
+          إلغاء
+        </button>
+      </div>
+    </div>
+
+    <!-- Edit Value Box -->
+    <div
+      id="editValueModal"
+      class="hidden fixed inset-0 bg-brand-dark/80 backdrop-blur-sm z-[200] flex items-center justify-center"
+    >
+      <div
+        class="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-2xl w-96 text-center relative border-t-4 border-brand-gold"
+      >
+        <button
+          onclick="closeModals()"
+          class="absolute top-4 left-4 text-gray-400 hover:text-red-500"
+        >
+          <i class="fas fa-times text-xl"></i>
+        </button>
+        <h3
+          id="editModalTitle"
+          class="text-2xl font-black text-brand-dark dark:text-white mb-6"
+        >
+          تعديل القيمة
+        </h3>
+        <input
+          type="text"
+          id="newValueInput"
+          class="w-full text-center text-xl font-black px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-slate-600 focus:border-brand-gold outline-none bg-gray-50 dark:bg-slate-700 dark:text-white mb-6"
+        />
+        <button
+          onclick="saveNewValue()"
+          class="w-full bg-green-500 text-white py-3 rounded-xl font-black text-lg shadow-lg hover:bg-green-600"
+        >
+          حفظ <i class="fas fa-check"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- General Sub Modal (Exp, Tip, Doc) -->
+    <div
+      id="subModal"
+      class="hidden fixed inset-0 bg-brand-dark/80 backdrop-blur-sm z-[200] flex justify-center items-center"
+    >
+      <div
+        class="bg-white dark:bg-slate-800 p-8 rounded-3xl shadow-2xl w-96 text-right relative border-t-4 border-brand-gold"
+      >
+        <button
+          onclick="closeSubModal()"
+          class="absolute top-4 left-4 text-gray-400 hover:text-red-500"
+        >
+          <i class="fas fa-times text-xl"></i>
+        </button>
+        <div id="subModalContent"></div>
+      </div>
+    </div>
+
+    <!-- Trash Modal -->
+    <div
+      id="trashModal"
+      class="hidden fixed inset-0 bg-brand-dark/80 backdrop-blur-sm z-[200] flex justify-center items-center"
+    >
+      <div
+        class="bg-white dark:bg-slate-800 p-8 rounded-3xl w-full max-w-lg relative border dark:border-slate-700 shadow-2xl"
+      >
+        <button
+          onclick="closeModals()"
+          class="absolute top-4 left-4 text-gray-400 hover:text-red-500"
+        >
+          <i class="fas fa-times text-xl"></i>
+        </button>
+        <h3
+          class="text-2xl font-black text-red-500 mb-4 flex items-center gap-2"
+        >
+          <i class="fas fa-trash-can"></i> سلة المهملات
+        </h3>
+        <div id="trashList" class="space-y-3 overflow-y-auto max-h-96"></div>
+      </div>
+    </div>
+
+    <!-- Custom Confirm Modal -->
+    <div
+      id="confirmModal"
+      class="hidden fixed inset-0 bg-brand-dark/80 backdrop-blur-sm z-[300] flex justify-center items-center"
+    >
+      <div
+        class="bg-white dark:bg-slate-800 p-8 rounded-[35px] shadow-2xl w-full max-w-sm text-center relative border-t-8 border-red-500"
+      >
+        <div
+          class="w-20 h-20 bg-red-50 dark:bg-red-900/20 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6 text-3xl"
+        >
+          <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <h3
+          id="confirmTitle"
+          class="text-2xl font-black text-slate-800 dark:text-white mb-2"
+        >
+          تأكيد الحذف
+        </h3>
+        <p
+          id="confirmMessage"
+          class="text-gray-500 dark:text-gray-400 font-bold mb-8"
+        >
+          هل أنت متأكد من رغبتك في نقل هذا العميل لسلة المهملات؟
+        </p>
+
+        <div class="flex gap-4">
+          <button
+            id="confirmBtn"
+            class="flex-1 bg-red-500 text-white py-4 rounded-2xl font-black text-lg shadow-lg hover:bg-red-600 transition-all active:scale-95"
+          >
+            تأكيد
+          </button>
+          <button
+            onclick="closeConfirmModal()"
+            class="flex-1 bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 py-4 rounded-2xl font-black text-lg hover:bg-gray-200 dark:hover:bg-slate-600 transition-all active:scale-95"
+          >
+            إلغاء
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PDF Preview Modal -->
+    <div
+      id="pdfPreviewModal"
+      class="hidden fixed inset-0 bg-black/90 backdrop-blur-md z-[500] flex flex-col"
+    >
+      <!-- Modal Header -->
+      <div
+        class="flex justify-between items-center p-4 bg-slate-800 text-white shadow-lg"
+      >
+        <h3
+          id="pdfPreviewTitle"
+          class="text-xl font-bold truncate max-w-md text-brand-gold"
+        >
+          معاينة الملف
+        </h3>
+        <button
+          onclick="closePDFPreview()"
+          class="text-2xl hover:text-red-500 transition-colors px-4"
+        >
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <!-- PDF Viewer Container -->
+      <div
+        class="flex-1 bg-slate-900 overflow-y-auto p-4 flex flex-col items-center gap-4"
+        id="pdfViewerContainer"
+      >
+        <!-- Canvas elements will be rendered here by pdf.js -->
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- SCRIPTS                                    -->
+    <!-- ========================================== -->
+    <script src="script.js"></script>
+  </body>
+</html>
